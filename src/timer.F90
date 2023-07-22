@@ -9,7 +9,7 @@ module timer_module
     implicit none
 
     private
-    public :: timer, sec2hms
+    public :: timer, cpu_timer, sec2hms
 
     !> Timer type
     type timer
@@ -17,6 +17,13 @@ module timer_module
     contains
         procedure :: tic, toc
     end type timer
+
+    !> CPU timer
+    type cpu_timer
+        real(kind=rk), private :: seed
+    contains
+        procedure :: tic => cpu_tic, toc => cpu_toc
+    end type cpu_timer
 
 contains
 
@@ -29,9 +36,8 @@ contains
     end subroutine tic
 
     !> Stop timer
-    function toc(self)
+    real(kind=rk) function toc(self)
         class(timer), intent(in) :: self
-        real(kind=rk) :: toc
         integer :: time_now, time_rate
 
         call system_clock(time_now, time_rate)
@@ -39,16 +45,31 @@ contains
 
     end function toc
 
+    !> Start CPU timer
+    subroutine cpu_tic(self)
+        class(cpu_timer), intent(inout) :: self
+
+        call cpu_time(self%seed)
+
+    end subroutine cpu_tic
+
+    !> Stop CPU timer
+    real(kind=rk) function cpu_toc(self)
+        class(cpu_timer), intent(in) :: self
+
+        call cpu_time(cpu_toc)
+        cpu_toc = cpu_toc - self%seed
+
+    end function cpu_toc
+
     !> Transform seconds to hh:mm:ss
-    pure function sec2hms(sec) result(hms)
+    pure character(12) function sec2hms(sec) result(hms)
         real(kind=rk), intent(in) :: sec
-        character(8) :: hms
-        integer :: h, m, s
+        integer :: h, m
 
         h = int(sec/3600.0_rk)
         m = int((sec - h*3600.0_rk)/60.0_rk)
-        s = int(sec - h*3600.0_rk - m*60.0_rk)
-        write (hms, '(i2.2, ":", i2.2, ":", i2.2)') h, m, s
+        write (hms, '(i2.2, ":", i2.2, ":", f6.3)') h, m, sec - h*3600.0_rk - m*60.0_rk
 
     end function sec2hms
 
