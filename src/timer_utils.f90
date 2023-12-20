@@ -17,7 +17,7 @@ contains
 
     end function sec2hms
 
-    !> Transform seconds to day:hh:mm
+    !> Transform seconds to dd/hh:mm
     pure character(8) function sec2dhm(sec) result(dhm)
         real(kind=wp), intent(in) :: sec
         integer :: d, h

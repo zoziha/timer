@@ -34,7 +34,7 @@ contains
     !> Convert time to string
     function toc_string(self) result(string)
         class(cpu_timer_type), intent(in) :: self
-        character(len=12) :: string
+        character(len=8) :: string
 
         string = sec2hms(self%toc())
 
