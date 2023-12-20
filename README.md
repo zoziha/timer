@@ -5,7 +5,7 @@
 
 A simple timer module to get the number of seconds between two timestamps.
 
-Only FPM is supported, other build systems can copy the source file (`./src/timer.F90`) directly.
+Only FPM is supported, other build systems can copy the source file (`./src/*.f90`) directly.
 
 ## Usage
 
@@ -23,19 +23,21 @@ timer = { git="https://github.com/zoziha/timer" }
 ```
 
 ```fortran
-program main
+program example_day_timer
 
-    use timer_module, only: timer, sec2hms
+    use timer_module, only: day_timer_type, sec2hms
     implicit none
 
-    type(timer) :: tmr
+    type(day_timer_type) :: tmr
 
     call tmr%tic()
     call sleep(1)
-    print *, 'Elapsed time: ', tmr%toc(), ' seconds'
-    print *, 'Elapsed time: ', sec2hms(tmr%toc()), ' (h:m:s)'
+    print *, 'Elapsed day time: ', tmr%toc(), ' sec'
+    print *, 'Elapsed day time: ', sec2hms(tmr%toc()), ' (h:m:s)'
+    print *, 'Elapsed day time: ', tmr%toc_string(), ' (d/h:m)'
 
-end program main
-! Elapsed time:    1.00000000      seconds
-! Elapsed time: 00:00:01 (h:m:s)
+end program example_day_timer
+! Elapsed day time:    1.01499999      sec
+! Elapsed day time: 00:00:01 (h:m:s)
+! Elapsed day time: 00/00:00 (d/h:m)
 ```
